@@ -1,0 +1,47 @@
+{
+    "model_name": "lstm_cnn",
+    "model_type": "Deep Learning",
+    "frequency": "1h",
+    "target_asset": "BTC/USDT",
+    "architecture": {
+        "layers": [
+            "conv1d",
+            "max_pooling1d",
+            "lstm",
+            "dropout",
+            "lstm_1",
+            "dropout_1",
+            "dense"
+        ],
+        "trainable_parameters": 47155
+    },
+    "training_config": {
+        "optimizer": "Adam",
+        "learning_rate": 0.001,
+        "loss_function": "binary_crossentropy",
+        "batch_size": 64,
+        "max_epochs": 50,
+        "early_stopping_patience": 10
+    },
+    "performance_metrics": {
+        "test_accuracy": 0.5134245006085774,
+        "test_auc_roc": 0.5198067266679595,
+        "test_precision": 0.5212815353660424,
+        "test_recall": 0.4763116956583227,
+        "test_f1_score": 0.4977830328111144
+    },
+    "backtesting": {
+        "total_return": 0.4448660546262846,
+        "annual_volatility": 0.07774085274227614,
+        "sharpe_ratio": 2.0887699791469694,
+        "maximum_drawdown": -0.048264878446895684
+    },
+    "data_info": {
+        "total_samples": 69858,
+        "training_samples": 55867,
+        "test_samples": 13967,
+        "sequence_length": 24,
+        "feature_selection": "SelectKBest (k=20)"
+    },
+    "export_timestamp": "2026-01-30 23:13:16"
+}

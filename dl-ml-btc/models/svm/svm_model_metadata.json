@@ -1,0 +1,100 @@
+{
+    "model_name": "SVM Bitcoin Directional Predictor",
+    "model_type": "Support Vector Machine (RBF Kernel)",
+    "accuracy": 0.5260860230444429,
+    "best_params": {
+        "C": 0.1,
+        "gamma": 0.01
+    },
+    "top_features": [
+        "Open",
+        "returns",
+        "momentum_24h",
+        "MACD",
+        "MACD_hist",
+        "RSI_14",
+        "STOCH_K",
+        "STOCH_D",
+        "ADX_14",
+        "CCI_20",
+        "WILLR_14",
+        "MFI_14",
+        "OBV",
+        "close_to_sma20",
+        "close_to_sma50",
+        "close_to_sma200",
+        "tx_fees_btc",
+        "mempool_size_bytes",
+        "total_btc_supply",
+        "sp500",
+        "dxy",
+        "gold",
+        "oil",
+        "eur_usd",
+        "jpy_usd"
+    ],
+    "feature_selection_method": "SelectKBest (f_classif) + Correlation Filter",
+    "training_size": 55888,
+    "test_size": 13973,
+    "total_dataset_size": 69861,
+    "timeframe": "Hourly",
+    "target_variable": "target_direction",
+    "hyperparameter_search_space": {
+        "C": [
+            0.1,
+            1,
+            10,
+            100
+        ],
+        "gamma": [
+            "scale",
+            "auto",
+            0.01,
+            0.001
+        ]
+    },
+    "cv_method": "TimeSeriesSplit (n_splits=3)",
+    "optimization_samples": 10000,
+    "final_training_samples": 20000,
+    "data_preprocessing": {
+        "scaling": "StandardScaler",
+        "missing_values": "forward/backward fill",
+        "lag_features": "1-5 lags for key indicators"
+    },
+    "performance_metrics": {
+        "accuracy": 0.5260860230444429,
+        "classification_report": {
+            "0": {
+                "precision": 0.5201507683386489,
+                "recall": 0.52,
+                "f1-score": 0.5200753732424989,
+                "support": 6900.0
+            },
+            "1": {
+                "precision": 0.5318727915194347,
+                "recall": 0.5320231867665771,
+                "f1-score": 0.531947978512864,
+                "support": 7073.0
+            },
+            "accuracy": 0.5260860230444429,
+            "macro avg": {
+                "precision": 0.5260117799290418,
+                "recall": 0.5260115933832885,
+                "f1-score": 0.5260116758776814,
+                "support": 13973.0
+            },
+            "weighted avg": {
+                "precision": 0.5260843452339253,
+                "recall": 0.5260860230444429,
+                "f1-score": 0.5260851733625369,
+                "support": 13973.0
+            }
+        }
+    },
+    "export_timestamp": "2026-01-27 14:44:17",
+    "model_files": {
+        "model_path": "../models/svm/best_svm_model.pkl",
+        "scaler_path": "../models/svm/best_scaler_svm.pkl",
+        "metadata_path": "../models/svm/svm_model_metadata.json"
+    }
+}

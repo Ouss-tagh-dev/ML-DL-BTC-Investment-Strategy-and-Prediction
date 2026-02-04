@@ -1,0 +1,93 @@
+{
+    "model_name": "LSTM Bitcoin Predictor",
+    "model_type": "Deep Learning - LSTM",
+    "frequency": "Hourly",
+    "target_asset": "BTC/USDT",
+    "target_type": "Binary Classification (Up/Down)",
+    "data_leakage_fix": {
+        "status": "FIXED",
+        "removed_columns": [
+            "target_class",
+            "target_regression",
+            "future_return_1h",
+            "future_return_6h",
+            "future_return_24h",
+            "future_close_1h",
+            "future_close_6h",
+            "future_close_24h",
+            "future_high_1h",
+            "future_high_6h",
+            "future_high_24h",
+            "future_low_1h",
+            "future_low_6h",
+            "future_low_24h"
+        ],
+        "note": "Model now uses ONLY historical data, no future-looking features"
+    },
+    "architecture": {
+        "input_shape": [
+            24,
+            30
+        ],
+        "layers": [
+            "LSTM(128, return_seq=True) + BatchNorm + Dropout(0.3)",
+            "LSTM(64, return_seq=False) + BatchNorm + Dropout(0.25)",
+            "Dense(32) + BatchNorm + Dropout(0.2)",
+            "Dense(16) + Dropout(0.1)",
+            "Dense(1, sigmoid)"
+        ],
+        "total_parameters": 134337,
+        "sequence_length": 24
+    },
+    "training_config": {
+        "optimizer": "Adam",
+        "learning_rate": 0.001,
+        "loss_function": "binary_crossentropy",
+        "batch_size": 32,
+        "epochs_trained": 39,
+        "early_stopping_patience": 20,
+        "regularization": {
+            "L2": 0.0001,
+            "dropout": [
+                0.3,
+                0.25,
+                0.2,
+                0.1
+            ]
+        }
+    },
+    "data_info": {
+        "total_samples": 69861,
+        "training_samples": 55864,
+        "test_samples": 13949,
+        "num_features": 30,
+        "sequence_length": 24,
+        "feature_selection": "SelectKBest(k=30)",
+        "normalization": "StandardScaler (fit on train only)",
+        "data_leakage_status": "VERIFIED: No future-looking columns in features"
+    },
+    "performance_metrics": {
+        "train_accuracy": 0.508807102964342,
+        "test_accuracy": 0.5105742347121658,
+        "test_auc_roc": 0.5128365160959389,
+        "test_precision": 0.5088377075522228,
+        "test_recall": 0.9421932558798527,
+        "test_f1_score": 0.6608038952650668,
+        "note": "Realistic accuracy after removing data leakage. Previous 97% was inflated."
+    },
+    "backtesting": {
+        "total_return": 0.333791441872177,
+        "annual_volatility": 0.07775149506648485,
+        "sharpe_ratio": 0.023934770401243612,
+        "maximum_drawdown": -0.04533999303009255,
+        "win_rate": 0.5105742347121658
+    },
+    "files_generated": {
+        "model": "btc_lstm_hourly_model.h5",
+        "scaler": "btc_lstm_hourly_scaler.pkl",
+        "training_history": "lstm_training_history.png",
+        "equity_curve": "lstm_equity_curve.png"
+    },
+    "timestamp": "2026-01-30T23:49:50.700612",
+    "version": "2.0 (Data Leakage Fixed)"
+}

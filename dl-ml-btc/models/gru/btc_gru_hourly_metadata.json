@@ -1,0 +1,46 @@
+{
+    "model_name": "gru",
+    "model_type": "Deep Learning",
+    "frequency": "1h",
+    "target_asset": "BTC/USDT",
+    "architecture": {
+        "layers": [
+            "bidirectional",
+            "dropout",
+            "gru_1",
+            "dropout_1",
+            "dense",
+            "dense_1"
+        ],
+        "trainable_parameters": 49121
+    },
+    "training_config": {
+        "optimizer": "Adam",
+        "learning_rate": 0.001,
+        "loss_function": "binary_crossentropy",
+        "batch_size": 64,
+        "max_epochs": 50,
+        "early_stopping_patience": 10
+    },
+    "performance_metrics": {
+        "test_accuracy": 0.5193670795446409,
+        "test_auc_roc": 0.5246900861530102,
+        "test_precision": 0.5282512626262627,
+        "test_recall": 0.4733418186960826,
+        "test_f1_score": 0.49929141493249796
+    },
+    "backtesting": {
+        "total_return": 0.7057700940708116,
+        "annual_volatility": 0.07771052678649154,
+        "sharpe_ratio": 3.0145747797542803,
+        "maximum_drawdown": -0.04808212766864635
+    },
+    "data_info": {
+        "total_samples": 69858,
+        "training_samples": 55867,
+        "test_samples": 13967,
+        "sequence_length": 24,
+        "feature_selection": "SelectKBest (k=20)"
+    },
+    "export_timestamp": "2026-01-30 23:49:55"
+}

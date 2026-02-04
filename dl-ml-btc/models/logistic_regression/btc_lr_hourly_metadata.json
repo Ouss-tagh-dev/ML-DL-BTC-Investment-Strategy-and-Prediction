@@ -1,0 +1,39 @@
+{
+    "model_name": "Logistic Regression BTC",
+    "accuracy": 0.5265869891934445,
+    "best_params": {
+        "C": 0.001,
+        "penalty": "l2",
+        "solver": "liblinear"
+    },
+    "top_features": [
+        "Open",
+        "returns",
+        "momentum_24h",
+        "MACD",
+        "MACD_hist",
+        "RSI_14",
+        "STOCH_K",
+        "STOCH_D",
+        "ADX_14",
+        "CCI_20",
+        "WILLR_14",
+        "MFI_14",
+        "OBV",
+        "close_to_sma20",
+        "close_to_sma50",
+        "close_to_sma200",
+        "mempool_size_bytes",
+        "dxy",
+        "oil",
+        "fear_greed_value",
+        "nvt_ratio",
+        "returns_lag_1",
+        "returns_lag_2",
+        "returns_lag_3",
+        "returns_lag_4"
+    ],
+    "training_size": 55888,
+    "test_size": 13973,
+    "export_timestamp": "2026-01-26 12:56:38"
+}

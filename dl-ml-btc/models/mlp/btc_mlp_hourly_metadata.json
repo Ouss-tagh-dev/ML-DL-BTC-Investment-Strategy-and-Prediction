@@ -1,0 +1,74 @@
+{
+    "model_name": "MLP Bitcoin Directional Predictor",
+    "model_type": "Deep Neural Network (Multi-Layer Perceptron)",
+    "accuracy": 0.5269448221570171,
+    "auc_roc": 0.5379149326792845,
+    "sharpe_ratio": 1.4907804438608045,
+    "max_drawdown": -0.23090730060078912,
+    "total_return_backtest": 1.5581295898001435,
+    "architecture": {
+        "layers": [
+            "Input: 30 features (scaled)",
+            "Dense(256) + BatchNorm + Dropout(0.3)",
+            "Dense(128) + BatchNorm + Dropout(0.3)",
+            "Dense(64) + BatchNorm + Dropout(0.25)",
+            "Dense(32) + BatchNorm + Dropout(0.2)",
+            "Output: Dense(1, sigmoid)"
+        ],
+        "total_parameters": 53121,
+        "trainable_parameters": 52161
+    },
+    "training_config": {
+        "optimizer": "Adam",
+        "learning_rate": 0.001,
+        "loss_function": "binary_crossentropy",
+        "batch_size": 32,
+        "max_epochs": 150,
+        "early_stopping_patience": 15,
+        "l2_regularization": 0.0001
+    },
+    "data_config": {
+        "training_size": 55888,
+        "test_size": 13973,
+        "validation_split": 0.2,
+        "number_of_features": 30,
+        "feature_names": [
+            "Open",
+            "returns",
+            "momentum_24h",
+            "MACD",
+            "MACD_hist",
+            "RSI_14",
+            "STOCH_K",
+            "STOCH_D",
+            "ADX_14",
+            "CCI_20",
+            "WILLR_14",
+            "MFI_14",
+            "OBV",
+            "close_to_sma20",
+            "close_to_sma50",
+            "close_to_sma200",
+            "tx_fees_btc",
+            "mempool_size_bytes",
+            "dxy",
+            "oil",
+            "fear_greed_value",
+            "nvt_ratio",
+            "extreme_greed",
+            "dxy_returns",
+            "returns_lag_1",
+            "returns_lag_2",
+            "returns_lag_3",
+            "returns_lag_4",
+            "RSI_14_lag_1",
+            "RSI_14_lag_2"
+        ]
+    },
+    "performance_metrics": {
+        "test_accuracy": 0.5269448221570171,
+        "test_auc": 0.5379149326792845,
+        "test_loss": 0.6967743635177612
+    },
+    "export_timestamp": "2026-01-30 23:06:25"
+}
