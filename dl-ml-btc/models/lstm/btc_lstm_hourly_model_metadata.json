@@ -1,12 +1,9 @@
 {
-    "model_name": "Random Forest BTC",
-    "accuracy": 0.5327417161668933,
-    "best_params": {
-        "max_depth": 10,
-        "min_samples_split": 5,
-        "n_estimators": 100
-    },
-    "top_features": [
+    "features": [
+        "Open",
+        "High",
+        "Low",
+        "Close",
         "returns",
         "log_returns",
         "momentum_24h",
@@ -23,17 +20,20 @@
         "close_to_sma20",
         "close_to_sma50",
         "oil",
+        "fear_greed_value",
+        "target_direction",
         "returns_lag_1",
         "returns_lag_2",
         "returns_lag_3",
-        "returns_lag_4",
         "RSI_14_lag_1",
         "RSI_14_lag_2",
         "MACD_hist_lag_1",
         "MACD_hist_lag_2",
         "MACD_hist_lag_3"
     ],
-    "training_size": 55888,
-    "test_size": 13973,
-    "export_timestamp": "2026-02-04 22:15:52"
+    "seq_len": 24,
+    "date": "2026-02-04 23:43:01.930745",
+    "test_accuracy": 0.5096663325218388,
+    "test_auc": 0.5120183886736672,
+    "test_f1": 0.6324989210185585
 }

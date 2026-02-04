@@ -3,7 +3,7 @@
     "model_type": "Deep Learning",
     "frequency": "1h",
     "target_asset": "BTC/USDT",
-    "architecture": {
+    "Architecture": {
         "layers": [
             "bidirectional",
             "dropout",
@@ -23,17 +23,17 @@
         "early_stopping_patience": 10
     },
     "performance_metrics": {
-        "test_accuracy": 0.5193670795446409,
-        "test_auc_roc": 0.5246900861530102,
-        "test_precision": 0.5282512626262627,
-        "test_recall": 0.4733418186960826,
-        "test_f1_score": 0.49929141493249796
+        "test_accuracy": 0.5173623541204267,
+        "test_auc_roc": 0.523257053252706,
+        "test_precision": 0.5236389684813754,
+        "test_recall": 0.5169000141422713,
+        "test_f1_score": 0.5202476692050387
     },
     "backtesting": {
-        "total_return": 0.7057700940708116,
-        "annual_volatility": 0.07771052678649154,
-        "sharpe_ratio": 3.0145747797542803,
-        "maximum_drawdown": -0.04808212766864635
+        "total_return": 0.6128723506684326,
+        "annual_volatility": 0.07772198716687659,
+        "sharpe_ratio": 2.702131573009824,
+        "maximum_drawdown": -0.04894274838149775
     },
     "data_info": {
         "total_samples": 69858,
@@ -42,5 +42,5 @@
         "sequence_length": 24,
         "feature_selection": "SelectKBest (k=20)"
     },
-    "export_timestamp": "2026-01-30 23:49:55"
+    "export_timestamp": "2026-02-04 21:59:37"
 }
