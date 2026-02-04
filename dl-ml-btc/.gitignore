@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+env/
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# Data and Models
+data/raw/
+data/processed/
+data/features
+# models/ # Keeping models folder structure tracked (READMEs, metadata), ignoring binaries below
+*.h5
+*.pkl
+*.keras
+*.joblib
+*.pt
+*.pth
+*.onnx
+
+# Logs
+*.log
