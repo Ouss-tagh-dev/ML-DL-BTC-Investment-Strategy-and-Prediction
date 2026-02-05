@@ -43,12 +43,20 @@ class ModelService:
                 logger.warning(f"Model directory not found: {model_dir}")
                 return False
             
-            # Load metadata
-            metadata_files = list(model_dir.glob("*_metadata.json"))
+            # Load metadata - Merge all found metadata files
+            metadata_files = list(model_dir.glob("*_metadata.json")) + list(model_dir.glob("*_model_metadata.json"))
             if metadata_files:
-                with open(metadata_files[0], 'r') as f:
-                    self.metadata[model_id] = json.load(f)
-                logger.info(f"Loaded metadata for {model_id}")
+                combined_metadata = {}
+                for meta_file in metadata_files:
+                    try:
+                        with open(meta_file, 'r') as f:
+                            data = json.load(f)
+                            combined_metadata.update(data)
+                    except Exception as e:
+                        logger.error(f"Error reading metadata file {meta_file}: {e}")
+                
+                self.metadata[model_id] = combined_metadata
+                logger.info(f"Loaded merged metadata for {model_id} from {len(metadata_files)} files")
             
             # Load scaler
             scaler_files = list(model_dir.glob("*_scaler.pkl"))
@@ -99,10 +107,18 @@ class ModelService:
         # 1. From performance_metrics block
         if 'performance_metrics' in metadata:
             perf = metadata['performance_metrics']
-            if 'test_accuracy' in perf: metadata['accuracy'] = perf['test_accuracy']
-            if 'test_auc' in perf: metadata['auc'] = perf['test_auc']
-            if 'test_auc_roc' in perf: metadata['auc'] = perf['test_auc_roc']
-            if 'test_loss' in perf: metadata['loss'] = perf['test_loss']
+            # Standardize accuracy keys
+            if 'test_accuracy' in perf: metadata['accuracy'] = float(perf['test_accuracy'])
+            elif 'accuracy' in perf: metadata['accuracy'] = float(perf['accuracy'])
+            
+            # Standardize AUC keys
+            if 'test_auc' in perf: metadata['auc'] = float(perf['test_auc'])
+            elif 'test_auc_roc' in perf: metadata['auc'] = float(perf['test_auc_roc'])
+            elif 'auc_roc' in perf: metadata['auc'] = float(perf['auc_roc'])
+            elif 'auc' in perf: metadata['auc'] = float(perf['auc'])
+            
+            # Standardize loss
+            if 'test_loss' in perf: metadata['loss'] = float(perf['test_loss'])
             
         # 2. From backtesting block
         if 'backtesting' in metadata:
@@ -112,22 +128,32 @@ class ModelService:
                 if key in bt:
                     # Map maximum_drawdown to max_drawdown
                     target_key = 'max_drawdown' if key == 'maximum_drawdown' else key
-                    metadata[target_key] = bt[key]
+                    metadata[target_key] = float(bt[key])
         
-        # 3. Direct mappings for inconsistent formats
+        # 3. Direct mappings for top-level keys (common in ML models)
+        if 'accuracy' in metadata: 
+            metadata['accuracy'] = float(metadata['accuracy'])
+            
         if 'total_return_backtest' in metadata:
-            metadata['total_return'] = metadata['total_return_backtest']
+            metadata['total_return'] = float(metadata['total_return_backtest'])
+        
+        # 4. Fallback for missing metrics to ensure consistency in comparison tables
+        for key in ['accuracy', 'auc', 'sharpe_ratio', 'total_return', 'max_drawdown']:
+            if key not in metadata:
+                metadata[key] = 0.0 # Default to 0 instead of missing
+            else:
+                # Ensure float
+                try:
+                    metadata[key] = float(metadata[key])
+                except:
+                    metadata[key] = 0.0
             
         metadata['id'] = model_id
+        metadata['name'] = metadata.get('model_name', model_id.replace('_', ' ').title())
+        metadata['type'] = metadata.get('model_type', 'ML')
         metadata['loaded'] = model_id in self.models
         metadata['has_scaler'] = model_id in self.scalers
         metadata['status'] = 'ready' if metadata['loaded'] else 'unavailable'
-        
-        # Ensure common keys exist
-        if 'name' not in metadata and 'model_name' in metadata:
-            metadata['name'] = metadata['model_name']
-        if 'type' not in metadata and 'model_type' in metadata:
-            metadata['type'] = metadata['model_type']
             
         return metadata
     
@@ -172,9 +198,42 @@ class ModelService:
             # Convert features dict to DataFrame
             df = pd.DataFrame([features])
             
+            # FEATURE FILTERING LOGIC
+            # Determine expected features from scaler or metadata
+            expected_features = []
+            scaler = self.scalers.get(model_id)
+            
+            # 1. Try to get from scaler (feature_names_in_)
+            if scaler is not None and hasattr(scaler, 'feature_names_in_'):
+                expected_features = list(scaler.feature_names_in_)
+                logger.info(f"Using features from scaler for {model_id} ({len(expected_features)})")
+            
+            # 2. Try to get from metadata
+            elif model_id in self.metadata:
+                meta = self.metadata[model_id]
+                if 'features' in meta:
+                    expected_features = meta['features']
+                    logger.info(f"Using 'features' from metadata for {model_id} ({len(expected_features)})")
+                elif 'top_features' in meta:
+                    expected_features = meta['top_features']
+                    logger.info(f"Using 'top_features' from metadata for {model_id} ({len(expected_features)})")
+            
+            # Apply filtering if we found expected features
+            if expected_features:
+                # Check for missing features and fill with 0
+                missing = [f for f in expected_features if f not in df.columns]
+                if missing:
+                    logger.warning(f"Model {model_id} missing features: {missing}. Filling with 0.")
+                    for f in missing:
+                        df[f] = 0.0
+                
+                # Filter df to exactly the expected features in correct order
+                df = df[expected_features]
+            else:
+                logger.warning(f"No feature info found for {model_id}, using all {len(df.columns)} columns")
+
             # Apply scaler if available
-            if use_scaler and model_id in self.scalers:
-                scaler = self.scalers[model_id]
+            if use_scaler and scaler is not None:
                 X = scaler.transform(df)
             else:
                 X = df.values
@@ -205,9 +264,9 @@ class ModelService:
             
             return {
                 'model_id': model_id,
-                'prediction': prediction,
-                'probability': prob,
-                'confidence': abs(prob - 0.5) * 2,  # 0 to 1 scale
+                'prediction': int(prediction),
+                'probability': float(prob),
+                'confidence': float(abs(prob - 0.5) * 2),  # 0 to 1 scale
                 'direction': 'UP' if prediction == 1 else 'DOWN'
             }
             
@@ -220,9 +279,14 @@ class ModelService:
         predictions = []
         
         for model_id in settings.AVAILABLE_MODELS:
-            result = self.predict(model_id, features)
-            if result:
-                predictions.append(result)
+            try:
+                result = self.predict(model_id, features)
+                if result:
+                    predictions.append(result)
+            except Exception as e:
+                logger.error(f"Error in batch prediction for {model_id}: {e}")
+                # Continue with other models
+                continue
         
         return predictions
 

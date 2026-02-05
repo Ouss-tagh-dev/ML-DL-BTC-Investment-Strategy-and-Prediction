@@ -12,7 +12,7 @@ export default function Predictions() {
 
   const featuresQ = useQuery({
     queryKey: ["feature-names"],
-    queryFn: () => dataApi.getFeatureNames().then((r) => r.features),
+    queryFn: () => dataApi.getFeatureNames().then((r) => r.data.features),
   });
 
   const handleBatch = React.useCallback(async () => {

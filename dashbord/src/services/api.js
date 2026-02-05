@@ -17,6 +17,7 @@ export const dataApi = {
   getHistorical: (params) => api.get("/data/historical", { params }),
   getLatest: (n = 1) => api.get(`/data/latest?n=${n}`),
   getStatistics: () => api.get("/data/statistics"),
+  getFeatureNames: () => api.get("/data/feature-names"),
 };
 
 export const modelsApi = {

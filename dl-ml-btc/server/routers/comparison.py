@@ -23,9 +23,10 @@ async def compare_accuracy():
         
         data = []
         for model in models_info:
-            if model.get('accuracy'):
+            if model.get('accuracy') is not None:
                 data.append({
                     "model": model.get('name', model.get('id')),
+                    "name": model.get('name', model.get('id')),
                     "model_id": model.get('id'),
                     "accuracy": model.get('accuracy'),
                     "type": model.get('type', 'ML')
@@ -54,9 +55,10 @@ async def compare_sharpe_ratio():
         
         data = []
         for model in models_info:
-            if model.get('sharpe_ratio'):
+            if model.get('sharpe_ratio') is not None:
                 data.append({
                     "model": model.get('name', model.get('id')),
+                    "name": model.get('name', model.get('id')),
                     "model_id": model.get('id'),
                     "sharpe_ratio": model.get('sharpe_ratio'),
                     "type": model.get('type', 'ML')
@@ -85,12 +87,13 @@ async def compare_returns():
         
         data = []
         for model in models_info:
-            if model.get('total_return'):
+            if model.get('total_return') is not None:
                 data.append({
                     "model": model.get('name', model.get('id')),
+                    "name": model.get('name', model.get('id')),
                     "model_id": model.get('id'),
                     "total_return": model.get('total_return'),
-                    "benchmark_return": model.get('benchmark_return'),
+                    "benchmark_return": model.get('benchmark_return', 0.0),
                     "type": model.get('type', 'ML')
                 })
         
@@ -128,7 +131,7 @@ async def compare_all_metrics():
             model_id = model.get('id')
             model_type = model.get('type', 'ML')
             
-            if model.get('accuracy'):
+            if model.get('accuracy') is not None:
                 comparison["accuracy"].append({
                     "model": model_name,
                     "model_id": model_id,
@@ -136,7 +139,7 @@ async def compare_all_metrics():
                     "type": model_type
                 })
             
-            if model.get('sharpe_ratio'):
+            if model.get('sharpe_ratio') is not None:
                 comparison["sharpe_ratio"].append({
                     "model": model_name,
                     "model_id": model_id,
@@ -144,7 +147,7 @@ async def compare_all_metrics():
                     "type": model_type
                 })
             
-            if model.get('total_return'):
+            if model.get('total_return') is not None:
                 comparison["total_return"].append({
                     "model": model_name,
                     "model_id": model_id,
@@ -152,7 +155,7 @@ async def compare_all_metrics():
                     "type": model_type
                 })
             
-            if model.get('max_drawdown'):
+            if model.get('max_drawdown') is not None:
                 comparison["max_drawdown"].append({
                     "model": model_name,
                     "model_id": model_id,
@@ -160,7 +163,7 @@ async def compare_all_metrics():
                     "type": model_type
                 })
             
-            if model.get('auc'):
+            if model.get('auc') is not None:
                 comparison["auc"].append({
                     "model": model_name,
                     "model_id": model_id,
