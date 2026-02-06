@@ -31,7 +31,17 @@
         "gold",
         "oil",
         "eur_usd",
-        "jpy_usd"
+        "jpy_usd",
+        "fear_greed_value",
+        "nvt_ratio",
+        "extreme_greed",
+        "dxy_returns",
+        "returns_lag_1",
+        "returns_lag_2",
+        "returns_lag_3",
+        "returns_lag_4",
+        "RSI_14_lag_1",
+        "RSI_14_lag_2"
     ],
     "feature_selection_method": "SelectKBest (f_classif) + Correlation Filter",
     "training_size": 55888,
@@ -91,7 +101,7 @@
             }
         }
     },
-    "export_timestamp": "2026-02-05 12:17:30",
+    "export_timestamp": "2026-02-05 16:45:18",
     "model_files": {
         "model_path": "../models/svm/best_svm_model.pkl",
         "scaler_path": "../models/svm/best_scaler_svm.pkl",
