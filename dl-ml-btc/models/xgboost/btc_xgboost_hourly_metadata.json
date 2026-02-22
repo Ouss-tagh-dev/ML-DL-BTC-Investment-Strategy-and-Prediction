@@ -1,6 +1,14 @@
 {
     "model_name": "XGBoost BTC",
     "accuracy": 0.53173978386889,
+    "backtesting": {
+        "total_return": 2.734618036550165,
+        "annual_volatility": 0.468641234140403,
+        "sharpe_ratio": 1.9973089455559876,
+        "maximum_drawdown": -0.2552787244949404,
+        "win_rate": 0.53173978386889,
+        "total_trades": 3977
+    },
     "best_params": {
         "learning_rate": 0.01,
         "max_depth": 3,
@@ -35,5 +43,5 @@
     ],
     "training_size": 55888,
     "test_size": 13973,
-    "export_timestamp": "2026-02-04 22:22:05"
+    "export_timestamp": "2026-02-22 14:51:30"
 }

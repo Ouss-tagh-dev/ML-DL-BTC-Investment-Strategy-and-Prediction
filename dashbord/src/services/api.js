@@ -18,6 +18,7 @@ export const dataApi = {
   getLatest: (n = 1) => api.get(`/data/latest?n=${n}`),
   getStatistics: () => api.get("/data/statistics"),
   getFeatureNames: () => api.get("/data/feature-names"),
+  getLatestNews: (limit = 5) => api.get(`/data/latest-news?limit=${limit}`),
 };
 
 export const modelsApi = {
@@ -39,6 +40,17 @@ export const comparisonApi = {
   getReturns: () => api.get("/comparison/returns"),
   getAllMetrics: () => api.get("/comparison/all-metrics"),
   getMlVsDl: () => api.get("/comparison/ml-vs-dl"),
+};
+
+export const logsApi = {
+  getLogs: (params) => api.get("/logs/", { params }),
+  clearLogs: () => api.delete("/logs/"),
+};
+
+export const settingsApi = {
+  getSettings: () => api.get("/settings/"),
+  updateSettings: (data) => api.put("/settings/", data),
+  getSystemInfo: () => api.get("/settings/system-info"),
 };
 
 export default api;

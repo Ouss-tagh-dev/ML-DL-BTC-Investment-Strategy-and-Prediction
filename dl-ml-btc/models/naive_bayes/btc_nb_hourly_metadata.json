@@ -1,6 +1,14 @@
 {
     "model_name": "Optimized Naive Bayes (PCA)",
     "accuracy": 0.5226508265941459,
+    "backtesting": {
+        "total_return": 0.4652557982169456,
+        "annual_volatility": 0.46873306364838946,
+        "sharpe_ratio": 0.7455992606611805,
+        "maximum_drawdown": -0.44153735604969857,
+        "win_rate": 0.5242,
+        "total_trades": 2709
+    },
     "best_params": "PCA(0.95) + GaussianNB",
     "top_features": [
         "returns",
@@ -21,5 +29,5 @@
     ],
     "training_size": 55888,
     "test_size": 13973,
-    "export_timestamp": "2026-02-04 22:12:50"
+    "export_timestamp": "2026-02-22 14:55:24"
 }

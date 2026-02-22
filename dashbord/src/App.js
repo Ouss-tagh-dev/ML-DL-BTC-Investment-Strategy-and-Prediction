@@ -6,6 +6,9 @@ import Dashboard from "./pages/Dashboard.jsx";
 import Models from "./pages/Models.jsx";
 import Comparison from "./pages/Comparison.jsx";
 import Predictions from "./pages/Predictions.jsx";
+import Backtesting from "./pages/Backtesting.jsx";
+import Logs from "./pages/Logs.jsx";
+import Settings from "./pages/Settings.jsx";
 import "./App.css";
 
 function App() {
@@ -20,6 +23,9 @@ function App() {
             <Route path="/models" element={<Models />} />
             <Route path="/comparison" element={<Comparison />} />
             <Route path="/predictions" element={<Predictions />} />
+            <Route path="/backtesting" element={<Backtesting />} />
+            <Route path="/logs" element={<Logs />} />
+            <Route path="/settings" element={<Settings />} />
           </Routes>
         </main>
       </div>

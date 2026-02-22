@@ -11,7 +11,7 @@ export default function PredictionPanel({ modelId, onResult }) {
   const handlePredict = async () => {
     setLoading(true);
     try {
-      const res = await mutation.mutateAsync({ model_id: modelId });
+      const res = await mutation.mutateAsync({ model_id: modelId, use_latest: true });
       onResult && onResult(res);
     } catch (e) {
       onResult && onResult({ error: e?.message || "Prediction failed" });

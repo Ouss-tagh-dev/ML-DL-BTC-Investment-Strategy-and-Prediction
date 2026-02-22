@@ -70,10 +70,13 @@ async def predict(request: PredictionRequest):
         features = request.features
         
         # If use_latest, get latest data
+        history = None
         if request.use_latest:
-            latest = data_service.get_latest_data(n=1)
-            if latest and latest['data']:
-                features = latest['data'][0]
+            # Fetch last 24 rows to support sequence models
+            hist_data = data_service.get_latest_data(n=24)
+            if hist_data and hist_data.get('data'):
+                history = hist_data['data']
+                features = history[-1]
                 # Remove timestamp if present
                 features.pop('timestamp', None)
         
@@ -152,7 +155,15 @@ async def batch_predict(data: Dict[str, Any] = Body(...)):
         if not model_service.models_loaded:
              model_service.load_all_models()
 
-        predictions = model_service.predict_all(features)
+        # Get history if use_latest
+        history = None
+        if use_latest:
+            # Fetch last 24 rows to support sequence models
+            hist_data = data_service.get_latest_data(n=24)
+            if hist_data and hist_data.get('data'):
+                history = hist_data['data']
+
+        predictions = model_service.predict_all(features, history=history)
         
         return {
             "predictions": predictions,

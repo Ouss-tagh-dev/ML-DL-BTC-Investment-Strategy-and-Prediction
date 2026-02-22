@@ -24,17 +24,17 @@
         "early_stopping_patience": 10
     },
     "performance_metrics": {
-        "test_accuracy": 0.5127801245793656,
-        "test_auc_roc": 0.5194461254114302,
-        "test_precision": 0.5194274028629857,
-        "test_recall": 0.5028991656059963,
-        "test_f1_score": 0.5110296759359058
+        "test_accuracy": 0.5147132526670007,
+        "test_auc_roc": 0.5215791453671265,
+        "test_precision": 0.5224589912616894,
+        "test_recall": 0.4819686041578278,
+        "test_f1_score": 0.5013976754450493
     },
     "backtesting": {
-        "total_return": 0.4190911273166613,
-        "annual_volatility": 0.07774347999873356,
-        "sharpe_ratio": 1.9884418206456045,
-        "maximum_drawdown": -0.05086858957730643
+        "total_return": 0.4978288608985679,
+        "annual_volatility": 0.07773521030125663,
+        "sharpe_ratio": 2.289458066303894,
+        "maximum_drawdown": -0.052808527863350496
     },
     "data_info": {
         "total_samples": 69858,
@@ -43,5 +43,5 @@
         "sequence_length": 24,
         "feature_selection": "SelectKBest (k=20)"
     },
-    "export_timestamp": "2026-02-04 23:50:30"
+    "export_timestamp": "2026-02-22 15:03:02"
 }

@@ -104,6 +104,51 @@ async def get_latest_data(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.get("/latest-news", response_model=DataResponse)
+async def get_latest_news(
+    limit: int = Query(5, description="Number of latest news items", ge=1, le=50)
+):
+    """
+    Get the latest Bitcoin news articles with impact labels
+    """
+    try:
+        return data_service.get_latest_news(limit=limit)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+class NewsData(BaseModel):
+    """Model for a single news item"""
+    datetime: str
+    text: str
+    url: str
+    label: int
+
+class NewsBatchRequest(BaseModel):
+    """Request model for batch news upload"""
+    data: List[NewsData]
+
+@router.post("/news")
+async def receive_news_data(request: NewsBatchRequest):
+    """
+    Receive and store news data for model training
+    
+    Format:
+    - **datetime**: ISO format date or YYYY-MM-DD
+    - **text**: News content
+    - **url**: Source URL
+    - **label**: Impact label (0, 1, etc.)
+    """
+    try:
+        # data_service.save_news_data expects a list of dicts
+        news_list = [item.dict() for item in request.data]
+        success = data_service.save_news_data(news_list)
+        if success:
+            return {"message": f"Successfully saved {len(news_list)} news items", "status": "success"}
+        else:
+            raise HTTPException(status_code=500, detail="Failed to save news data")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @router.get("/feature-names")
 async def get_feature_names():
     """

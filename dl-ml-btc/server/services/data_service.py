@@ -181,5 +181,75 @@ class DataService:
         
         return list(self.df.columns)
 
+    def get_latest_news(self, limit: int = 5) -> Dict[str, Any]:
+        """Get the latest news articles from the processed news file"""
+        try:
+            file_path = settings.NEWS_DATA_FILE
+            if not file_path.exists():
+                logger.warning(f"News data file not found: {file_path}")
+                return {"data": [], "count": 0}
+            
+            # Read only the last few lines for performance
+            df = pd.read_csv(file_path)
+            
+            # Ensure required columns exist
+            required_cols = ['datetime', 'text', 'url', 'label']
+            available_cols = [col for col in required_cols if col in df.columns]
+            
+            # Sort by datetime descending
+            if 'datetime' in df.columns:
+                df['datetime'] = pd.to_datetime(df['datetime'])
+                df = df.sort_values('datetime', ascending=False)
+            
+            latest_news = df.head(limit).copy()
+            
+            # Format datetime for JSON
+            if 'datetime' in latest_news.columns:
+                latest_news['datetime'] = latest_news['datetime'].dt.strftime('%Y-%m-%d %H:%M:%S')
+            
+            return {
+                "data": latest_news.to_dict(orient='records'),
+                "count": len(latest_news)
+            }
+        except Exception as e:
+            logger.error(f"Error getting latest news: {e}")
+            return {"data": [], "count": 0, "error": str(e)}
+
+    def save_news_data(self, data: List[Dict[str, Any]]) -> bool:
+        """
+        Save/Append news data to the historical_train.csv file
+        Required fields: datetime, text, url, label
+        """
+        try:
+            file_path = settings.NEWS_DATA_FILE
+            new_df = pd.DataFrame(data)
+            
+            # Ensure required columns exist
+            required_cols = ['datetime', 'text', 'url', 'label']
+            for col in required_cols:
+                if col not in new_df.columns:
+                    raise ValueError(f"Missing required column: {col}")
+            
+            # Reorder columns to match standard
+            new_df = new_df[required_cols]
+            
+            if file_path.exists():
+                # Append to existing file
+                existing_df = pd.read_csv(file_path)
+                combined_df = pd.concat([existing_df, new_df], ignore_index=True)
+                # Drop duplicates based on text and datetime
+                combined_df = combined_df.drop_duplicates(subset=['datetime', 'text'])
+                combined_df.to_csv(file_path, index=False)
+            else:
+                # Create parent directories
+                file_path.parent.mkdir(parents=True, exist_ok=True)
+                new_df.to_csv(file_path, index=False)
+                
+            logger.info(f"Saved {len(new_df)} news items to {file_path}")
+            return True
+        except Exception as e:
+            logger.error(f"Error saving news data: {e}")
+            return False
+
 # Global instance
 data_service = DataService()

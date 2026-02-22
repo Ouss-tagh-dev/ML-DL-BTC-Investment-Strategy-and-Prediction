@@ -1,11 +1,11 @@
 {
     "model_name": "MLP Bitcoin Directional Predictor",
     "model_type": "Deep Neural Network (Multi-Layer Perceptron)",
-    "accuracy": 0.5255850568954412,
-    "auc_roc": 0.5355599370539529,
-    "sharpe_ratio": 1.9487830047618828,
-    "max_drawdown": -0.20649560561446023,
-    "total_return_backtest": 2.601998524338948,
+    "accuracy": 0.5238674586702927,
+    "auc_roc": 0.5356251575187947,
+    "sharpe_ratio": 1.4799136181871047,
+    "max_drawdown": -0.2597212387900122,
+    "total_return_backtest": 1.5373952541881515,
     "Architecture": {
         "layers": [
             "Input: 30 features (scaled)",
@@ -66,9 +66,9 @@
         ]
     },
     "performance_metrics": {
-        "test_accuracy": 0.5255850568954412,
-        "test_auc": 0.5355599370539529,
-        "test_loss": 0.6967645287513733
+        "test_accuracy": 0.5238674586702927,
+        "test_auc": 0.5356251575187947,
+        "test_loss": 0.6975325345993042
     },
-    "export_timestamp": "2026-02-04 22:19:56"
+    "export_timestamp": "2026-02-22 14:59:45"
 }

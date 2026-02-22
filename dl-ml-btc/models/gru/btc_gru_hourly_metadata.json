@@ -23,17 +23,17 @@
         "early_stopping_patience": 10
     },
     "performance_metrics": {
-        "test_accuracy": 0.5173623541204267,
-        "test_auc_roc": 0.523257053252706,
-        "test_precision": 0.5236389684813754,
-        "test_recall": 0.5169000141422713,
-        "test_f1_score": 0.5202476692050387
+        "test_accuracy": 0.5169327701009523,
+        "test_auc_roc": 0.5237735250611875,
+        "test_precision": 0.5236565420560748,
+        "test_recall": 0.5071418469806251,
+        "test_f1_score": 0.5152669013578561
     },
     "backtesting": {
-        "total_return": 0.6128723506684326,
-        "annual_volatility": 0.07772198716687659,
-        "sharpe_ratio": 2.702131573009824,
-        "maximum_drawdown": -0.04894274838149775
+        "total_return": 0.5936335397780816,
+        "annual_volatility": 0.07772427999750123,
+        "sharpe_ratio": 2.63519696995203,
+        "maximum_drawdown": -0.06036053089610392
     },
     "data_info": {
         "total_samples": 69858,
@@ -42,5 +42,5 @@
         "sequence_length": 24,
         "feature_selection": "SelectKBest (k=20)"
     },
-    "export_timestamp": "2026-02-04 21:59:37"
+    "export_timestamp": "2026-02-22 16:13:36"
 }

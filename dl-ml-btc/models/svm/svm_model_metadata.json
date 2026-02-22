@@ -2,6 +2,14 @@
     "model_name": "SVM Bitcoin Directional Predictor",
     "model_type": "Support Vector Machine (RBF Kernel)",
     "accuracy": 0.5260860230444429,
+    "backtesting": {
+        "total_return": 0.619935580788757,
+        "annual_volatility": 0.46872723417896883,
+        "sharpe_ratio": 0.8796650934595596,
+        "maximum_drawdown": -0.2869373991663098,
+        "win_rate": 0.5260860230444429,
+        "total_trades": 2309
+    },
     "best_params": {
         "C": 0.1,
         "gamma": 0.01
@@ -73,6 +81,14 @@
     },
     "performance_metrics": {
         "accuracy": 0.5260860230444429,
+        "backtesting": {
+            "total_return": 0.619935580788757,
+            "annual_volatility": 0.46872723417896883,
+            "sharpe_ratio": 0.8796650934595596,
+            "maximum_drawdown": -0.2869373991663098,
+            "win_rate": 0.5260860230444429,
+            "total_trades": 2309
+        },
         "classification_report": {
             "0": {
                 "precision": 0.5201507683386489,
@@ -101,7 +117,7 @@
             }
         }
     },
-    "export_timestamp": "2026-02-05 16:45:18",
+    "export_timestamp": "2026-02-22 21:48:40",
     "model_files": {
         "model_path": "../models/svm/best_svm_model.pkl",
         "scaler_path": "../models/svm/best_scaler_svm.pkl",

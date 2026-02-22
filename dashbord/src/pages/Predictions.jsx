@@ -77,23 +77,74 @@ export default function Predictions() {
       )}
 
       {/* Feature Preview Section */}
-      <div className="bg-gray-800/40 border border-gray-700/50 p-6 rounded-3xl shadow-lg">
-        <div className="flex items-center space-x-2 text-gray-300 mb-6">
-          <Search size={18} className="text-blue-500" />
-          <h3 className="font-semibold uppercase tracking-wider text-sm">Feature Engineering Preview</h3>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 bg-gray-800/40 border border-gray-700/50 p-6 rounded-3xl shadow-lg">
+          <div className="flex items-center space-x-2 text-gray-300 mb-6">
+            <Search size={18} className="text-blue-500" />
+            <h3 className="font-semibold uppercase tracking-wider text-sm">Feature Engineering Preview</h3>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+            {featuresQ.data?.slice(0, 16).map(feat => (
+              <div key={feat} className="text-[10px] bg-gray-900/60 p-2 rounded-lg border border-gray-700/30 text-gray-400 font-mono text-center truncate">
+                {feat}
+              </div>
+            ))}
+            {featuresQ.data?.length > 16 && (
+              <div className="text-[10px] bg-gray-800 p-2 rounded-lg border border-gray-700/30 text-gray-500 text-center font-bold italic">
+                +{featuresQ.data.length - 16} more
+              </div>
+            )}
+          </div>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
-          {featuresQ.data?.slice(0, 18).map(feat => (
-            <div key={feat} className="text-[10px] bg-gray-900/60 p-2 rounded-lg border border-gray-700/30 text-gray-400 font-mono text-center truncate">
-              {feat}
-            </div>
-          ))}
-          {featuresQ.data?.length > 18 && (
-            <div className="text-[10px] bg-gray-800 p-2 rounded-lg border border-gray-700/30 text-gray-500 text-center font-bold italic">
-              +{featuresQ.data.length - 18} more
-            </div>
-          )}
+
+        <LiveNewsPredictions />
+      </div>
+    </div>
+  );
+}
+
+function LiveNewsPredictions() {
+  const { data, isLoading } = useQuery({
+    queryKey: ["latest-news"],
+    queryFn: () => dataApi.getLatestNews(3).then((r) => r.data.data),
+    refetchInterval: 30000, // Refresh every 30s
+  });
+
+  return (
+    <div className="bg-gray-800/40 border border-gray-700/50 p-6 rounded-3xl shadow-lg flex flex-col">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center space-x-2 text-gray-300">
+          <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+          <h3 className="font-semibold uppercase tracking-wider text-sm">Live News Feed</h3>
         </div>
+      </div>
+
+      <div className="space-y-4 flex-1">
+        {isLoading ? (
+          <div className="flex items-center justify-center p-12">
+            <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : data?.length > 0 ? (
+          data.map((news, i) => (
+            <div key={i} className="bg-gray-900/40 p-4 rounded-2xl border border-gray-700/30 hover:bg-gray-800/60 transition-colors">
+              <div className="flex justify-between items-start gap-2 mb-2">
+                <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-md ${news.label === 1 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                  {news.label === 1 ? 'Bullish' : 'Bearish'}
+                </span>
+                <span className="text-[9px] text-gray-500 flex items-center font-mono">
+                  <Clock size={10} className="mr-1" /> {news.datetime.split(' ')[1]}
+                </span>
+              </div>
+              <p className="text-xs text-gray-300 line-clamp-2 leading-relaxed">
+                {news.text}
+              </p>
+            </div>
+          ))
+        ) : (
+          <div className="text-center p-8 text-gray-500 text-sm italic">
+            Waiting for news events...
+          </div>
+        )}
       </div>
     </div>
   );

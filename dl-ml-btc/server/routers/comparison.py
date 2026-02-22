@@ -193,7 +193,9 @@ async def compare_ml_vs_dl():
         dl_models = []
         
         for model in models_info:
-            if model.get('id') in ['mlp', 'lstm', 'gru', 'lstm_cnn']:
+            # Check model type from metadata
+            model_type = model.get('type', 'ML').upper()
+            if model_type == 'DL':
                 dl_models.append(model)
             else:
                 ml_models.append(model)

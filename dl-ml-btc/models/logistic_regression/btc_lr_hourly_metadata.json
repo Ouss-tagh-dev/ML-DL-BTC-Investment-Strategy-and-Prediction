@@ -1,6 +1,14 @@
 {
     "model_name": "Logistic Regression BTC",
     "accuracy": 0.5265869891934445,
+    "backtesting": {
+        "total_return": 1.7389452857260697,
+        "annual_volatility": 0.46868095771884016,
+        "sharpe_ratio": 1.582342834809403,
+        "maximum_drawdown": -0.25442866244426254,
+        "win_rate": 0.5265869891934445,
+        "total_trades": 2785
+    },
     "best_params": {
         "C": 0.001,
         "penalty": "l2",
@@ -35,5 +43,5 @@
     ],
     "training_size": 55888,
     "test_size": 13973,
-    "export_timestamp": "2026-02-04 22:08:35"
+    "export_timestamp": "2026-02-22 15:13:33"
 }

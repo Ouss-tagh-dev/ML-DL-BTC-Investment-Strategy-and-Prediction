@@ -1,6 +1,14 @@
 {
     "model_name": "Random Forest BTC",
     "accuracy": 0.5327417161668933,
+    "backtesting": {
+        "total_return": 4.252762106283077,
+        "annual_volatility": 0.46858687762542534,
+        "sharpe_ratio": 2.454073622610784,
+        "maximum_drawdown": -0.30408679130165295,
+        "win_rate": 0.5327417161668933,
+        "total_trades": 4105
+    },
     "best_params": {
         "max_depth": 10,
         "min_samples_split": 5,
@@ -35,5 +43,5 @@
     ],
     "training_size": 55888,
     "test_size": 13973,
-    "export_timestamp": "2026-02-04 22:15:52"
+    "export_timestamp": "2026-02-22 14:55:02"
 }

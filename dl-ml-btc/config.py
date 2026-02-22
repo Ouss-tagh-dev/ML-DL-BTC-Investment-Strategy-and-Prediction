@@ -53,6 +53,7 @@ class Settings:
     BLOCKCHAIN_FILE = BLOCKCHAIN_OUTPUT_FILE
     MACRO_FILE = MACRO_OUTPUT_FILE
     SENTIMENT_FILE = SENTIMENT_OUTPUT_FILE
+    NEWS_DATA_FILE = BASE_DIR / 'data' / 'historical_train.csv'
     
     # Available Models
     AVAILABLE_MODELS = [

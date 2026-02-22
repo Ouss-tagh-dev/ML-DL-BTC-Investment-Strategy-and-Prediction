@@ -13,8 +13,8 @@ from pathlib import Path
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from config import settings
-from server.routers import data, models, metrics, comparison
+from config import settings as app_settings
+from server.routers import data, models, metrics, comparison, logs, settings
 from server.services import model_service
 
 # Configure logging
@@ -67,6 +67,8 @@ app.include_router(data.router, prefix="/api/data", tags=["Data"])
 app.include_router(models.router, prefix="/api/models", tags=["Models"])
 app.include_router(metrics.router, prefix="/api/metrics", tags=["Metrics"])
 app.include_router(comparison.router, prefix="/api/comparison", tags=["Comparison"])
+app.include_router(logs.router, prefix="/api/logs", tags=["Logs"])
+app.include_router(settings.router, prefix="/api/settings", tags=["Settings"])
 
 @app.get("/")
 async def root():
