@@ -8,9 +8,40 @@ from typing import Optional, List, Dict, Any
 from datetime import datetime
 import logging
 
+import logging
+import feedparser
+import re
+from textblob import TextBlob
+from dateutil import parser as dateparser
+from apscheduler.schedulers.background import BackgroundScheduler
+
 from config import settings
 
 logger = logging.getLogger(__name__)
+
+RSS_FEEDS = [
+    ("CoinDesk", "https://www.coindesk.com/arc/outboundfeeds/rss/"),
+    ("CoinTelegraph", "https://cointelegraph.com/rss"),
+    ("Bitcoin Magazine", "https://bitcoinmagazine.com/feed"),
+    ("Decrypt", "https://decrypt.co/feed"),
+    ("The Block", "https://www.theblock.co/rss.xml"),
+    ("Bitcoinist", "https://bitcoinist.com/feed/"),
+    ("NewsBTC", "https://www.newsbtc.com/feed/"),
+    ("CryptoSlate", "https://cryptoslate.com/feed/"),
+    ("U.Today", "https://u.today/rss"),
+]
+
+CRYPTO_LEXICON = {
+    # Positive keywords
+    "moon": 0.8, "rally": 0.6, "bull": 0.6, "surge": 0.6, "pump": 0.6, "adoption": 0.5,
+    "breakout": 0.5, "etf": 0.5, "bid": 0.4, "institutional": 0.4, "ath": 0.8, "upward": 0.5,
+    "positive": 0.4, "growth": 0.4, "buy": 0.4, "accumulation": 0.4,
+    # Negative keywords
+    "crash": -0.8, "dump": -0.7, "bear": -0.6, "risk": -0.5, "trap": -0.8, "hack": -0.9,
+    "scam": -0.9, "red": -0.4, "correction": -0.5, "resistance": -0.4, "sec": -0.4,
+    "regulatory": -0.3, "ban": -0.7, "haircut": -0.6, "dip": -0.5, "sell": -0.4,
+    "liquidated": -0.6, "quantum": -0.5, "lawsuit": -0.6
+}
 
 class DataService:
     """Service for managing Bitcoin data"""
@@ -18,6 +49,12 @@ class DataService:
     def __init__(self):
         self.df: Optional[pd.DataFrame] = None
         self.data_loaded = False
+        self.scheduler = BackgroundScheduler()
+        self.scheduler.add_job(self.fetch_live_news_rss, 'interval', minutes=5)
+        self.scheduler.start()
+        logger.info("News scheduler started - Refreshing every 5 minutes")
+        # Trigger an initial fetch immediately
+        self.fetch_live_news_rss()
         
     def load_data(self) -> bool:
         """Load Bitcoin features data from CSV"""
@@ -250,6 +287,63 @@ class DataService:
         except Exception as e:
             logger.error(f"Error saving news data: {e}")
             return False
+
+    def fetch_live_news_rss(self) -> int:
+        """Fetch latest news from RSS feeds and save them"""
+        logger.info("Starting live news fetch from RSS feeds...")
+        all_new_articles = []
+        
+        for source_name, url in RSS_FEEDS:
+            try:
+                feed = feedparser.parse(url)
+                for entry in feed.entries[:5]:  # Just take latest 5 per feed
+                    title = entry.get('title', '')
+                    summary = entry.get('summary', entry.get('description', ''))
+                    link = entry.get('link', '')
+                    
+                    # Clean tags from summary
+                    summary = re.sub(r'<[^>]+>', '', summary)
+                    
+                    # Parse date
+                    raw_date = entry.get('published', entry.get('updated', ''))
+                    try:
+                        dt = dateparser.parse(raw_date)
+                        dt_str = dt.strftime('%Y-%m-%d %H:%M:%S')
+                    except:
+                        dt_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    
+                    # Sentiment analysis
+                    full_text = f"{title}. {summary}".lower()
+                    blob_score = TextBlob(full_text).sentiment.polarity
+                    
+                    # Lexicon score
+                    lexicon_score = 0.0
+                    words = re.findall(r'\w+', full_text)
+                    for word in words:
+                        if word in CRYPTO_LEXICON:
+                            lexicon_score += CRYPTO_LEXICON[word]
+                    
+                    # Combined score (weighted towards lexicon for crypto context)
+                    final_score = (blob_score * 0.3) + (lexicon_score * 0.7)
+                    label = 1 if final_score >= 0 else 0
+                    
+                    all_new_articles.append({
+                        "datetime": dt_str,
+                        "text": title,
+                        "url": link,
+                        "label": int(label)
+                    })
+            except Exception as e:
+                logger.error(f"Error fetching from {source_name}: {e}")
+        
+        if all_new_articles:
+            # Sort by datetime
+            all_new_articles.sort(key=lambda x: x['datetime'], reverse=True)
+            # Take top items to avoid massive file growth if scheduler runs often
+            self.save_news_data(all_new_articles[:50])
+            return len(all_new_articles)
+        
+        return 0
 
 # Global instance
 data_service = DataService()

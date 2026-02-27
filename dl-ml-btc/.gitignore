@@ -13,6 +13,7 @@ env/
 .idea/
 
 # Data and Models
+data/
 data/raw/
 data/processed/
 data/features

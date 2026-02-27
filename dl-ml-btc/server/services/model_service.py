@@ -381,11 +381,17 @@ class ModelService:
                 price_change_24h = features.get('price_change_24h', 0.0)
                 severity = features.get('severity', 1)
                 
+                logger.info(f"Hybrid debug: text='{text[:30]}...', sentiment={sentiment_score}, category={category}, severity={severity}")
+                
                 # 1. Text Preprocessing
-                clean_text = re.sub(r"http\S+|www\S+", "", text)
-                clean_text = re.sub(r"<[^>]+>", " ", clean_text)
-                clean_text = re.sub(r"[^a-zA-Z0-9\s'\-\$\%\.\,]", " ", clean_text)
-                clean_text = re.sub(r"\s+", " ", clean_text).strip().lower()
+                try:
+                    clean_text = re.sub(r"http\S+|www\S+", "", text)
+                    clean_text = re.sub(r"<[^>]+>", " ", clean_text)
+                    clean_text = re.sub(r"[^a-zA-Z0-9\s'\-\$\%\.\,]", " ", clean_text)
+                    clean_text = re.sub(r"\s+", " ", clean_text).strip().lower()
+                except Exception as e:
+                    logger.error(f"Text cleanup failed: {e}")
+                    clean_text = "bitcoin news"
                 
                 # Enriched text matching training logic
                 def sentiment_label(score):
@@ -401,21 +407,31 @@ class ModelService:
                     else: return "minor_event"
                 
                 enriched = f"{clean_text} {category.lower()} {sentiment_label(sentiment_score)} {severity_label(severity)}"
+                logger.info(f"Enriched text: '{enriched}'")
                 
                 # Tokenization
                 tokenizer = self.scalers.get(f"{model_id}_tokenizer")
+                if not tokenizer:
+                    logger.error(f"Tokenizer not found for {model_id}")
+                    return None
+                    
                 X_text = pad_sequences(
                     tokenizer.texts_to_sequences([enriched]),
                     maxlen=cfg.get("MAX_LENGTH", 200), padding="post", truncating="post"
                 )
+                logger.info("Tokenization complete")
                 
-                # 2. TF-IDF LSA Preprocessing
                 tfidf = self.scalers.get(f"{model_id}_tfidf")
                 svd = self.scalers.get(f"{model_id}_svd")
                 tfidf_scaler = self.scalers.get(f"{model_id}_tfidf_scaler")
                 
+                if not all([tfidf, svd, tfidf_scaler]):
+                    logger.error(f"Missing TF-IDF components: tfidf={bool(tfidf)}, svd={bool(svd)}, scaler={bool(tfidf_scaler)}")
+                    return None
+
                 tfidf_raw = tfidf.transform([clean_text])
                 tfidf_lsa = tfidf_scaler.transform(svd.transform(tfidf_raw)).astype(np.float32)
+                logger.info("TF-IDF/LSA complete")
                 
                 # 3. Numeric Preprocessing
                 daily_defaults = {

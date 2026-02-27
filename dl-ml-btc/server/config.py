@@ -9,7 +9,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
 MODELS_DIR = BASE_DIR / "models"
 FEATURES_FILE = DATA_DIR / "features" / "btc_features_complete.csv"
-NEWS_DATA_FILE = DATA_DIR / "news" / "news_rss_processed.csv"
+NEWS_DATA_FILE = DATA_DIR / "raw" / "news_rss_processed.csv"
 
 # Global list of models to ensure consistency
 TOTAL_AVAILABLE_MODELS = [

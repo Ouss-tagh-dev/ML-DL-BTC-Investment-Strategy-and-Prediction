@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import PriceChart from "../components/charts/PriceChart";
 import { useHistoricalData, useModels, useLatestData, useBatchPredict } from "../hooks/useApi";
 import { useQuery } from "@tanstack/react-query";
-import { metricsApi } from "../services/api";
-import { TrendingUp, TrendingDown, Activity, BarChart3, Clock, Zap, AlertCircle, BrainCircuit } from "lucide-react";
+import { metricsApi, dataApi } from "../services/api";
+import { TrendingUp, TrendingDown, Activity, BarChart3, Clock, Zap, AlertCircle, BrainCircuit, ExternalLink, RefreshCw, Rss } from "lucide-react";
 
 export default function Dashboard() {
   const [consensus, setConsensus] = useState({ signal: "WAIT", ratio: 0, count: 0, upCount: 0, details: [] });
@@ -215,7 +215,103 @@ export default function Dashboard() {
           </div>
         </div>
       </div >
+
+      {/* Latest News & Narrative Section */}
+      <div className="bg-gray-800/40 border border-gray-700/50 p-6 rounded-2xl relative overflow-hidden group">
+        <div className="absolute top-0 left-0 w-1 h-full bg-blue-500 opacity-0 group-hover:opacity-100 transition-all duration-500" />
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h3 className="font-bold text-xl flex items-center space-x-3 text-white uppercase tracking-tight">
+              <div className="p-2 bg-blue-500/10 rounded-lg">
+                <Rss size={22} className="text-blue-400" />
+              </div>
+              <span>Live Market Narrative</span>
+            </h3>
+            <p className="text-xs text-gray-500 mt-1 font-medium">Real-time Bitcoin news from global sources with AI-driven sentiment</p>
+          </div>
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 px-3 py-1 bg-gray-900/60 border border-gray-700/50 rounded-full">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+              <span className="text-[10px] font-black text-green-400 uppercase tracking-widest">Live Feed</span>
+            </div>
+          </div>
+        </div>
+        <LiveNewsGrid />
+      </div>
     </div >
+  );
+}
+
+function LiveNewsGrid() {
+  const { data, isLoading, isFetching, refetch } = useQuery({
+    queryKey: ["latest-news-dashboard"],
+    queryFn: () => dataApi.getLatestNews(3).then((r) => r.data.data),
+    refetchInterval: 60000, // Reduced to 1 min refresh for dashboard
+  });
+
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="bg-gray-900/20 h-48 rounded-3xl border border-gray-700/20 animate-pulse" />
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {data?.length > 0 ? data.map((news, i) => (
+        <div key={i} className="group glass-card hover:bg-gray-800/80 transition-all duration-500 p-6 flex flex-col h-full transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/10 border-t-4 border-t-transparent hover:border-t-blue-500">
+          <div className="flex justify-between items-start mb-5">
+            <div className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-tighter flex items-center space-x-2 shadow-lg shadow-black/20 ${news.label === 1 ? 'bg-green-500 text-black border border-green-400' : 'bg-red-500 text-white border border-red-400'}`}>
+              {news.label === 1 ? (
+                <>
+                  <TrendingUp size={14} strokeWidth={3} />
+                  <span>Bullish Momentum</span>
+                </>
+              ) : (
+                <>
+                  <TrendingDown size={14} strokeWidth={3} />
+                  <span>Bearish Reversal</span>
+                </>
+              )}
+            </div>
+            <div className="flex items-center space-x-2 text-gray-400 font-mono text-[10px] bg-gray-900/40 px-2 py-1 rounded-md border border-gray-800">
+              <Clock size={12} className="text-blue-400" />
+              <span>{news.datetime.split(' ')[1].slice(0, 5)}</span>
+            </div>
+          </div>
+
+          <h4 className="text-base font-black text-white group-hover:text-blue-400 transition-colors line-clamp-2 leading-tight mb-4 tracking-tight">
+            {news.text}
+          </h4>
+
+          <div className={`mt-auto pt-5 border-t border-gray-700/30 flex items-center justify-between`}>
+            <div className={`text-[10px] font-bold uppercase tracking-widest flex items-center space-x-2 ${news.label === 1 ? 'text-green-400' : 'text-red-400'}`}>
+              <BrainCircuit size={14} className="animate-pulse" />
+              <span>AI Prediction</span>
+            </div>
+            <a
+              href={news.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group/btn flex items-center space-x-2 text-[10px] font-black text-blue-500 hover:text-white transition-all bg-blue-500/10 hover:bg-blue-500 px-4 py-2 rounded-xl"
+            >
+              <span>ANALYSIS</span>
+              <ExternalLink size={12} className="group-hover/btn:translate-x-1 transition-transform" />
+            </a>
+          </div>
+        </div>
+      )) : (
+        <div className="col-span-3 py-16 flex flex-col items-center justify-center space-y-4">
+          <div className="p-4 bg-gray-900 rounded-full border border-gray-800">
+            <RefreshCw size={32} className="text-gray-700 animate-spin" />
+          </div>
+          <p className="text-gray-500 font-medium italic">Scanning global RSS nodes for Bitcoin data...</p>
+        </div>
+      )}
+    </div>
   );
 }
 
