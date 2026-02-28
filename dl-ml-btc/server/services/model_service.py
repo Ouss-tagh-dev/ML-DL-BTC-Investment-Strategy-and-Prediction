@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 
 from server.config import settings
-from server.services.ml_utils import FocalLoss
+from server.services.ml_utils import FocalLoss, DiversityFocalLoss
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 import re
 
@@ -107,7 +107,7 @@ class ModelService:
                 logger.info(f"Loading Keras model for {model_id} from {model_path}")
                 self.models[model_id] = keras.models.load_model(
                     model_path,
-                    custom_objects={'FocalLoss': FocalLoss}
+                    custom_objects={'FocalLoss': FocalLoss, 'DiversityFocalLoss': DiversityFocalLoss}
                 )
                 
                 if model_id == 'hybrid_cnn_bilstm':
